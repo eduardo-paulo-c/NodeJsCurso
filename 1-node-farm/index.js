@@ -30,12 +30,22 @@ const url = require('url');
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // SERVER
+//Top level code is only executed once, when the application starts
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
+const dataObj = JSON.parse(data);
+
+//Call back function is executed each time tha it is requested
 const server = http.createServer((req, res) => {
     const pathName = req.url;
     if(pathName === '/' || pathName === '/overview'){
         res.end('This is OVERVIEW');
     }else if(pathName === '/product'){
         res.end('This is PRODUCT');
+    }else if(pathName === '/api'){
+        res.writeHead(200, {
+            'Content-type': 'application/json'
+        })
+        res.end(data);            
     } else {
         res.writeHead(404, {
             'Content-type': 'text/html',
