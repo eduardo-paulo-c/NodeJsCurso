@@ -1,3 +1,4 @@
+const { query } = require('express');
 const Tour = require('./../models/tourModel');
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
@@ -13,7 +14,25 @@ const Tour = require('./../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // Building a query.
+    const queryObj = { ...req.query };
+    const excludedFilds = ['page', 'sort', 'limit', 'filds'];
+    excludedFilds.forEach((el) => delete queryObj[el]);
+
+    console.log(req.query, queryObj);
+
+    const query = Tour.find(queryObj);
+
+    // const tours = await Tour.find()
+    //   .where('duration')
+    //   .equals(5)
+    //   .where('difficulty')
+    //   .equals('easy');
+
+    // Execute the query.
+    const tours = await query;
+
+    // Send response
     res.status(200).json({
       status: 'sucess',
       results: tours.length,
